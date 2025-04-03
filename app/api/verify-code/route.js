@@ -23,6 +23,7 @@ export async function POST(request) {
         // 验证通过后，删除验证码记录
         const deleteSql = 'DELETE FROM verification_codes WHERE email = ?';
         await pool.execute(deleteSql, [email]);
+        return new Response(JSON.stringify({ message: 'Verification code verified successfully', status: 100000 }), { status: 200 });
     } catch (error) {
         console.error('Error:', error);
         return new Response(JSON.stringify({ message: 'Internal server error', status: 100003 }), { status: 200 });
