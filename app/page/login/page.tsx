@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export default function Register() {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
@@ -47,8 +47,8 @@ export default function Register() {
       setMessage("网络错误，请稍后再试");
     }
   };
-  // 注册
-  const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
+  // 登录
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!email || !code || !password) {
       setMessage("请输入邮箱、验证码和密码");
@@ -56,23 +56,31 @@ export default function Register() {
     }
     setMessage("");
     try {
-        const response = await fetch("/api/user-register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({email, code, password}),
-        })
-        const data = await response.json();
-        setMessage(data.message || "注册成功，请登录");
+      const response = await fetch("/api/user-login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, code, password }),
+      });
+
+      const data = await response.json();
+      console.log("Login response", data);
+
+      if (data.status === 100000) {
+        setMessage("登录成功");
+      } else {
+        setMessage(data.message || "登录失败");
+      }
     } catch (error) {
-        console.error(error);
-        setMessage("网络错误，请稍后再试");
+      console.error(error);
+      setMessage("网络错误，请稍后再试");
     }
   };
+
   return (
     <div>
-      <form onSubmit={handleRegister}>
+      <form onSubmit={handleLogin}>
         <input type="email" placeholder="Email" onChange={handleEmailChange} />
         <div>
           <input
@@ -87,7 +95,7 @@ export default function Register() {
           placeholder="Password"
           onChange={handlePasswordChange}
         />
-        <button type="submit">Register</button>
+        <button type="submit">Login</button>
       </form>
       <div>{message}</div>
     </div>

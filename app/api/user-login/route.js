@@ -1,6 +1,6 @@
-import { verifyCodeService } from '@/services/verifyCode.js';
-import { insertUserService } from '@/services/userRegister.js';
 
+import { verifyUserService } from '@/services/userLogin.js';
+import { verifyCodeService } from '@/services/verifyCode.js';
 export async function POST(request) {
     const { email, password, code } = await request.json();
     // 检查请求参数是否完整
@@ -9,13 +9,13 @@ export async function POST(request) {
     }
     // 验证验证码
     const verifyCodeResponse = await verifyCodeService(email, code);
-    if (verifyCodeResponse.status !== 100000) {
+    if( verifyCodeResponse.status !== 100000) {
         return new Response(JSON.stringify(verifyCodeResponse), { status: 200 });
     }
-    // 插入用户到数据库
-    const insertUserResponse = await insertUserService(email, password);
-    if (insertUserResponse.status !== 100000) {
-        return new Response(JSON.stringify(insertUserResponse), { status: 200 });
+    // 验证用户登录
+    const verifyUserResponse = await verifyUserService(email, password);
+    if (verifyUserResponse.status !== 100000) {
+        return new Response(JSON.stringify(verifyUserResponse), { status: 200 });
     }
     return new Response(JSON.stringify(verifyCodeResponse), { status: 200 });
 }
